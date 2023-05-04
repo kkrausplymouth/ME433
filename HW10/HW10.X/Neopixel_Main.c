@@ -5,9 +5,11 @@
 #include "draw.h"
 #include "font.h"
 #include "IOextend.h"
+#include "ws2812b.h"
 #include <stdio.h>
 #include <string.h>
 
+#define NUM_RGBS 8
 
 void blink(int, int); // blink the LEDs function
 
@@ -23,51 +25,38 @@ int main(void) {
     ssd1306_clear(); 
     chip_setup(0b11111110); //setup IO extender
     toggle_LED(0, 1); //turn off LED
+    ws2812b_setup(); //rgb lights setup
 
     
-    //Accelerometer setup check
-    unsigned char who; // read whoami
-    who = whoami();
-    sprintf(m, "%x\n\r", who);
-    NU32DIP_WriteUART1(m); // print whoami
-    if (who != 0x68){
-        while(1){ // if whoami is not 0x68, stuck in loop with LEDs on
-            NU32DIP_WriteUART1("Stuck!\r\n");
-            blink(5, 100);
-        }
+    int initial_colors[8] = {40, 80, 120, 160, 200, 240, 280, 320};
+    int update_colors[8] = {10, 3, 8, 6, 1, 2, 6, 4};
+    int cur_colors[8] = {40, 80, 120, 160, 200, 240, 280, 320};
+    
+    wsColor c[NUM_RGBS];
+    for (int i=0; i<NUM_RGBS; i++){
+        c[i] = HSBtoRGB(initial_colors[i], 1, .3);
     }
     
-    char c[100];
-    sprintf(c, "+Z Accel: ");
-    drawString(c, 5, 5, 2);
-    
-    sprintf(c, "FPS: ");
-    drawString(c, 5, 20, 2);
-    
-    
-    unsigned char d[14]; // char array for the raw data
-    float ax, ay, az, gx, gy, gz, t; // floats to store the data
-    delay(1);
-	// wait to print until you get a newline
-    NU32DIP_YELLOW = 1;
-    _CP0_SET_COUNT(0);
-    while (1) {
-		// use core timer for exactly 100Hz loop
-        
 
-        // read IMU
-        burst_read_mpu6050(d);
-		// convert data
-        az = conv_zXL(d);
-        // print the data
-        sprintf(c, "%3.2f", az);
-        drawString(c, 55, 5, 1);
-        
-        
-        int FPS = 60/(((float) _CP0_GET_COUNT())/24000000);
-        _CP0_SET_COUNT(0);
-        sprintf(c, "%d", FPS);
-        drawString(c, 30, 20, 1);
+
+    int i = 0;
+    while (1) {
+        for (int j = 0; j<NUM_RGBS; j++){
+            int hue = cur_colors[j] + update_colors[j];
+            if (hue > 360){
+                hue = hue - 360;
+            }
+            cur_colors[j] = hue;
+            c[j] = HSBtoRGB(hue, 1, .5);
+        }
+        ws2812b_setColor(c, NUM_RGBS);
+        delay(.01);
+        //sprintf(m, "%d", i);
+        //drawString(m, 70, 15, 1);
+        i += 1;
+        if (i == 360){
+            i = 0;
+        }
     }
 }
 

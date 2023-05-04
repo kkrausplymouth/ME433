@@ -2,6 +2,11 @@
 #define WS2812B_H__
 
 #include<xc.h> // processor SFR definitions
+#ifndef NU32DIP__H__
+#include "nu32dip.h"
+#endif
+
+#define RGBCONTROL LATBbits.LATB7
 
 // link three 8bit colors together
 typedef struct {

@@ -100,8 +100,8 @@ ifneq ($(INFORMATION_MESSAGE), )
 endif
 	${MAKE}  -f nbproject/Makefile-default.mk ${DISTDIR}/HW14.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}
 	@echo "--------------------------------------"
-	@echo "User defined post-build step: ["C:\Users\kkrau\Documents\GitHub\ME433\Loader Files\nu32utility.exe" COM5 ${ImagePath}]"
-	@"C:\Users\kkrau\Documents\GitHub\ME433\Loader Files\nu32utility.exe" COM5 ${ImagePath}
+	@echo "User defined post-build step: ["C:\Users\kkrau\Documents\GitHub\ME433\Loader Files\nu32utility.exe" COM8 ${ImagePath}]"
+	@"C:\Users\kkrau\Documents\GitHub\ME433\Loader Files\nu32utility.exe" COM8 ${ImagePath}
 	@echo "--------------------------------------"
 
 MP_PROCESSOR_OPTION=32MX170F256B

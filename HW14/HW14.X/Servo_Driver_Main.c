@@ -20,15 +20,12 @@ void setupAll();
 int main(void) {
     char m[100];
     setupAll();
+    TRISBbits.TRISB15 = 0;
+    
 
+    servoSetAngle(135);
+    LATBbits.LATB15 = 1;
     
-    
-    while(1){
-        servoSetAngle(45);
-        delay(4);
-        servoSetAngle(135);
-        delay(4);
-    }
     
     while(1){
         NU32DIP_YELLOW = 0;
